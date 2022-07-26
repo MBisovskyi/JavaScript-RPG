@@ -25,19 +25,22 @@ let herculesCharacter = {
 let nemeanLion = {
   name: "Nemean Lion",
   health: 390,
-  attackPower: 100,
+  attackPower: enemyRandomAttackPower(101, 50),
+  attackName: "claws swipe",
 };
 
 let lernaeanHydra = {
   name: "Lernaean Hydra",
   health: 450,
-  attackPower: 90,
+  attackPower: enemyRandomAttackPower(51, 50),
+  attackName: "tail swipe",
 };
 
 let cerberus = {
   name: "Cerberus",
   health: 420,
-  attackPower: 120,
+  attackPower: enemyRandomAttackPower(151, 50),
+  attackName: "one of the heads bite",
 };
 
 // Story messages
@@ -69,15 +72,78 @@ function herculesAttackMethod(userInput) {
   return attackMethodName;
 }
 
-function runGame() {
-  alert(mainStoryOne);
-  alert(mainStoryTwo);
-  alert(mainStoryThree);
-  alert(mainStoryFour);
-  alert(fightWithLionStory);
+function herculesAttack(enemy) {
+  enemy.health = enemy.health - herculesCharacter.attackPower;
+  return enemy.health;
+}
 
-  let promptAttackMethod = promptHerculesAttackMethod();
-  let herculesAttackMethodName = herculesAttackMethod(promptAttackMethod);
+function enemyRandomAttackPower(min, max) {
+  let attackPower = Math.floor(Math.random() * min) + max;
+  return attackPower;
+}
+
+function lionAttack(hercules) {
+  hercules.health = hercules.health - nemeanLion.attackPower;
+  return hercules.health;
+}
+
+function hydraAttack(hercules) {
+  hercules.health = hercules.health - lernaeanHydra.attackPower;
+  return hercules.health;
+}
+
+function cerberusAttack(hercules) {
+  hercules.health = hercules.health - cerberus.attackPower;
+  return hercules.health;
+}
+
+function battleWinner(hercules, enemy) {
+  if (hercules.health <= 0) {
+    let winner = enemy.name;
+    return winner;
+  } else if (enemy.health <= 0) {
+    let winner = hercules.name;
+    return winner;
+  }
+}
+
+function lionBattlePhase() {
+  let isBattle = true;
+  while (isBattle) {
+    if (herculesCharacter.health <= 0 || nemeanLion.health <= 0) {
+      let winner = battleWinner(herculesCharacter, nemeanLion);
+      alert(`This battle is over! ${winner} is a winner!`);
+      isBattle = false;
+    }
+    if (herculesCharacter.health > 0 && nemeanLion.health > 0) {
+      herculesCharacter.health = lionAttack(herculesCharacter);
+      console.log(
+        `${nemeanLion.name} attacked ${herculesCharacter.name} by ${nemeanLion.attackName}!`
+      );
+    }
+    if (nemeanLion.health > 0 && herculesCharacter.health > 0) {
+      let userInput = promptHerculesAttackMethod();
+      let attackMethod = herculesAttackMethod(userInput);
+      nemeanLion.health = herculesAttack(nemeanLion);
+      console.log(
+        `${herculesCharacter.name} attacked ${nemeanLion.name} by ${attackMethod.name}`
+      );
+    }
+  }
+}
+
+function runGame() {
+  alert(nemeanLion.attackPower);
+  alert(lernaeanHydra.attackPower);
+  alert(cerberus.attackPower);
+  //   alert(mainStoryOne);
+  //   alert(mainStoryTwo);
+  //   alert(mainStoryThree);
+  //   alert(mainStoryFour);
+  //   alert(fightWithLionStory);
+  lionBattlePhase();
+
+  alert(herculesCharacter.health);
 }
 
 // Run Game!
